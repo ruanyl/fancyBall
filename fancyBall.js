@@ -30,6 +30,7 @@ fancyBall.prototype = {
         this.doCheckCollide(obja, objb);
       }
     }
+      this.ctx.stroke();
   },
   doCheckCollide: function(obja, objb) {
     if (this.collide(obja, objb)) {
@@ -46,10 +47,10 @@ fancyBall.prototype = {
     var dist = Math.pow(dist_2, 1 / 2);
     if (dist_2 <= minDist * minDist) {
       this.ctx.moveTo(Math.floor(obja.x)+0.5, Math.floor(obja.y)+0.5);
-      this.ctx.strokeStyle = "rgba(134,160,213," + (1-dist/this.lineDist) + ")";
       //this.ctx.quadraticCurveTo(obja.x, obja.y+40, objb.x, objb.y);
       this.ctx.lineTo(Math.floor(objb.x)+0.5, Math.floor(objb.y)+0.5);
-      this.ctx.stroke();
+      //this.ctx.strokeStyle = "rgba(101,131,191," + (1-dist/this.lineDist) + ")";
+      this.ctx.strokeStyle = "rgba(101,131,191,0.02)";
       return true;
     } else {
       return false;
@@ -65,7 +66,7 @@ fancyBall.prototype = {
     this.ctx.clearRect(0, 0, this.width, this.height);
     for (var i = this.balls.length; i--;) {
       this.checkCollide();
-      this.ctx.fillStyle = "#86a0d5";
+      this.ctx.fillStyle = "#6583c1";
       this.ctx.beginPath();
       this.ctx.arc(this.balls[i].x, this.balls[i].y, this.balls[i].r, 0, Math.PI * 2, true);
       this.ctx.closePath();
@@ -105,9 +106,11 @@ fancyBall.prototype = {
 
 var Ball = function(maxX, maxY, minR, maxR, maxV) {
   this.x = Math.random() * maxX >> 0;
+  //this.y = Math.random() * maxY >> 0;
   this.y = Math.random() * maxY >> 0;
   //this.y = Math.random() * maxY >> 0;
   //this.vx = Math.random() * maxV + 1 >> 0;
+  //this.vx = 1 * Math.random() + Math.random() + .05;
   this.vx = 0;
   this.vy = -1 * Math.random() - Math.random() - .05;
   //this.r = Math.random() * maxR >> 0;
