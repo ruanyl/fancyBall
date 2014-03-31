@@ -1,3 +1,8 @@
+var mouse = {
+  x: 0,
+  y: 0
+};
+
 var fancyBall = function(width, height) {
   this.canvas = null;
   this.ctx = null;
@@ -5,6 +10,9 @@ var fancyBall = function(width, height) {
   this.width = width || 480;
   this.height = height || 400;
   this.lineDist = 100;
+  this.mouseX = 0;
+  this.mouseY = 0;
+  this.mouseDist = 200;
 };
 
 fancyBall.prototype = {
@@ -21,12 +29,31 @@ fancyBall.prototype = {
       this.canvas.innerHTML = "Browser not support Canvas";
     }
   },
+  mouseMove: function(e) {
+    this.mouseX = e.layerX;
+    this.mouseY = e.layerY;
+  },
+  checkMouseCollide: function(ball) {
+    var distX = ball.x - mouse.x;
+    var distY = ball.y - mouse.y;
+    var dist = this.mouseDist * this.mouseDist;
+    var dist_2 = distX * distX + distY * distY;
+    if(dist_2 <= dist) {
+      var dist_1 = Math.pow(dist_2, 1/2);
+      ball.mouseCollide = "true";
+      ball.r = 2 + 8 * ((this.mouseDist - dist_1) / this.mouseDist);
+    } else {
+      ball.mouseCollide = "false";
+    }
+  },
   checkCollide: function() {
     var obja, objb;
     for (var i = 0; i < this.balls.length - 1; i++) {
       obja = this.balls[i];
+      this.checkMouseCollide(obja);
       for (var j = i + 1; j < this.balls.length; j++) {
         objb = this.balls[j];
+        this.checkMouseCollide(objb);
         this.doCheckCollide(obja, objb);
       }
     }
@@ -121,30 +148,34 @@ var Ball = function(maxX, maxY, minR, maxR, maxV) {
   }
 };
 
+
+var mouseMove = function(e) {
+  mouse.x = e.layerX;
+  mouse.y = e.layerY;
+}
+
 var viewportwidth;
 var viewportheight;
-
 // the more standards compliant browsers (mozilla/netscape/opera/IE7) use window.innerWidth and window.innerHeight
-
 if (typeof window.innerWidth != 'undefined') {
   viewportwidth = window.innerWidth,
   viewportheight = window.innerHeight
 }
-
 // IE6 in standards compliant mode (i.e. with a valid doctype as the first line in the document)
 else if (typeof document.documentElement != 'undefined' && typeof document.documentElement.clientWidth !=
   'undefined' && document.documentElement.clientWidth != 0) {
   viewportwidth = document.documentElement.clientWidth,
   viewportheight = document.documentElement.clientHeight
 }
-
 // older versions of IE
 else {
   viewportwidth = document.getElementsByTagName('body')[0].clientWidth,
   viewportheight = document.getElementsByTagName('body')[0].clientHeight
 }
+
 var fancyBall = new fancyBall(viewportwidth, viewportheight);
 fancyBall.initCanvas('myCanvas');
 if (fancyBall.canvas) {
   fancyBall.init(30);
+  fancyBall.canvas.addEventListener("mousemove", this.mouseMove, false);
 }
